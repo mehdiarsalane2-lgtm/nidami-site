@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StayZen Concierge — Conciergerie Premium au Maroc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sand:       #C9A96E;
+      --sand-light: #E8D5B0;
+      --sand-pale:  #F5EDD9;
+      --night:      #0D1117;
+      --night-soft: #1A2332;
+      --ivory:      #FAF8F4;
+      --terra:      #C47A5A;
+      --slate:      #6B7280;
+      --slate-light:#9CA3AF;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--ivory);
+      color: var(--night);
+      overflow-x: hidden;
+    }
+    .display { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+    h1,h2,h3,h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; line-height: 1.1; }
+    p, a, span, button, input, textarea, select, label { font-family: 'DM Sans', system-ui, sans-serif; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .divider { width: 48px; height: 2px; background: var(--sand); margin-bottom: 24px; }
+    .tag { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.3); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sand); }
+    .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sand); }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; cursor: pointer; text-decoration: none; border: none; transition: all .3s ease; }
+    .btn-primary { background: var(--sand); color: var(--night); }
+    .btn-primary:hover { background: var(--terra); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(196,122,90,.35); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--sand); color: var(--sand); }
+    .btn-outline:hover { background: var(--sand); color: var(--night); }
+    .btn-sm { padding: 10px 20px; font-size: 13px; }
+
+    .anim { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .anim.visible { opacity: 1; transform: translateY(0); }
+    .anim-d1 { transition-delay: .1s; }
+    .anim-d2 { transition-delay: .2s; }
+    .anim-d3 { transition-delay: .3s; }
+    .anim-d4 { transition-delay: .4s; }
+    .anim-d5 { transition-delay: .5s; }
+    .anim-d6 { transition-delay: .6s; }
+
+    body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(250,248,244,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+      padding: 16px 24px;
+    }
+    .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--night); }
+    .nav-logo-sub { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--sand); margin-top: 2px; }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { text-decoration: none; font-size: 13px; letter-spacing: .05em; color: var(--slate); transition: color .2s; }
+    .nav-links a:hover { color: var(--sand); }
+    .nav-cta { display: flex; gap: 12px; align-items: center; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--night); transition: .3s; }
+    .mobile-menu { display: none; flex-direction: column; gap: 16px; padding: 20px 24px 24px; background: var(--ivory); border-bottom: 1px solid rgba(201,169,110,0.1); }
+    .mobile-menu a { font-size: 16px; color: var(--slate); text-decoration: none; }
+    .mobile-menu.open { display: flex; }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    #hero {
+      min-height: 100vh; background: var(--night); display: flex; align-items: center;
+      position: relative; overflow: hidden; padding-top: 80px;
+    }
+    .hero-mesh {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(201,169,110,.12) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 70% at 10% 80%, rgba(196,122,90,.08) 0%, transparent 50%);
+    }
+    .hero-grid {
+      position: absolute; right: 0; top: 0; width: 50%; height: 100%; opacity: .04;
+      background: repeating-linear-gradient(45deg, var(--sand) 0, var(--sand) 1px, transparent 1px, transparent 40px);
+    }
+    .hero-content { position: relative; z-index: 2; padding: 80px 24px; max-width: 1200px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; }
+    .hero-text { max-width: 600px; }
+    .hero-text h1 { font-size: clamp(44px, 7vw, 72px); color: #fff; font-weight: 300; margin-bottom: 24px; }
+    .hero-text h1 em { color: var(--sand); font-style: italic; }
+    .hero-text p { font-size: 18px; color: rgba(255,255,255,.55); line-height: 1.8; margin-bottom: 40px; max-width: 500px; }
+    .hero-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 56px; }
+    .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+    .hero-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--sand); }
+    .hero-stat-label { font-size: 11px; color: rgba(255,255,255,.35); margin-top: 4px; }
+
+    .hero-card { width: 360px; background: linear-gradient(135deg, #1A2332, #0D1117); border: 1px solid rgba(201,169,110,.2); border-radius: 20px; padding: 32px; position: relative; overflow: hidden; flex-shrink: 0; }
+    .hero-card::before { content:''; position:absolute; top:24px; right:24px; width:80px; height:80px; border-radius:50%; background:var(--sand); opacity:.12; }
+    .hero-card::after { content:''; position:absolute; top:56px; right:8px; width:40px; height:40px; border-radius:50%; background:var(--terra); opacity:.08; }
+    .hero-card-loc { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--slate-light); margin-bottom: 12px; }
+    .hero-card-loc svg { color: var(--sand); }
+    .hero-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #fff; font-weight: 300; margin-bottom: 24px; }
+    .hero-card-sep { border: none; border-top: 1px solid rgba(201,169,110,.2); margin-bottom: 20px; }
+    .hero-card-stats { display: flex; gap: 24px; }
+    .hero-card-stat { text-align: center; }
+    .hero-card-stat-label { font-size: 10px; color: var(--slate-light); margin-bottom: 4px; }
+    .hero-card-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--sand); }
+    .hero-card-lines { position: absolute; left: 32px; display: flex; flex-direction: column; gap: 6px; top: 45%; }
+    .hero-card-line { width: 48px; height: 1px; background: rgba(201,169,110,.15); }
+
+    @media (max-width: 900px) { .hero-card { display: none; } .hero-content { grid-template-columns: 1fr; } }
+
+    #trust {
+      background: var(--night-soft);
+      border-top: 1px solid rgba(201,169,110,.1);
+      border-bottom: 1px solid rgba(201,169,110,.1);
+      padding: 20px 24px;
+    }
+    .trust-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 28px 48px; }
+    .trust-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,.5); }
+    .trust-icon { color: var(--sand); }
+
+    #services { padding: 112px 24px; background: var(--ivory); }
+    .section-header { margin-bottom: 64px; }
+    .section-header h2 { font-size: clamp(36px, 5vw, 56px); color: var(--night); margin-bottom: 16px; }
+    .section-header h2 em { color: var(--sand); font-style: italic; }
+    .section-header p { font-size: 17px; color: var(--slate); line-height: 1.8; max-width: 520px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    .service-card { background: #fff; border: 1px solid rgba(201,169,110,.12); border-radius: 20px; padding: 32px; transition: transform .3s, box-shadow .3s; }
+    .service-card:hover { transform: translateY(-5px); box-shadow: 0 20px 48px rgba(13,17,23,.09); }
+    .service-icon { width: 48px; height: 48px; background: var(--sand-pale); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+    .service-icon svg { color: var(--sand); }
+    .service-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; margin-bottom: 12px; }
+    .service-card p { font-size: 14px; color: var(--slate); line-height: 1.8; }
+
+    #avantages { padding: 112px 24px; background: var(--night); }
+    .avantages-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    @media (max-width: 900px) { .avantages-grid { grid-template-columns: 1fr; gap: 48px; } }
+    .avantages-left h2 { font-size: clamp(36px, 5vw, 56px); color: #fff; margin-bottom: 20px; }
+    .avantages-left h2 em { color: var(--sand); font-style: italic; }
+    .avantages-left p { font-size: 17px; color: rgba(255,255,255,.5); line-height: 1.8; margin-bottom: 36px; }
+    .avantages-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .av-card { background: rgba(255,255,255,.04); border: 1px solid rgba(201,169,110,.1); border-radius: 16px; padding: 24px; }
+    .av-card svg { color: var(--sand); margin-bottom: 16px; }
+    .av-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #fff; margin-bottom: 8px; }
+    .av-card p { font-size: 13px; color: rgba(255,255,255,.4); line-height: 1.75; }
+
+    #villes { padding: 112px 24px; background: var(--ivory); }
+    .villes-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 56px; flex-wrap: wrap; gap: 24px; }
+    .villes-header h2 { font-size: clamp(36px, 5vw, 56px); color: var(--night); }
+    .villes-header h2 em { color: var(--sand); font-style: italic; }
+    .villes-header p { font-size: 14px; color: var(--slate); line-height: 1.8; max-width: 260px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .grid-4 { grid-template-columns: 1fr; } }
+
+    .ville-card { border-radius: 20px; overflow: hidden; border: 1px solid rgba(201,169,110,.15); min-height: 300px; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; transition: transform .3s, box-shadow .3s; }
+    .ville-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(13,17,23,.2); }
+    .ville-loc { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--sand); margin-bottom: 16px; }
+    .ville-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; font-weight: 300; margin-bottom: 6px; }
+    .ville-rooms { font-size: 12px; color: rgba(255,255,255,.35); }
+    .ville-sep { border: none; border-top: 1px solid rgba(201,169,110,.18); margin: 20px 0 12px; }
+    .ville-rev-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.3); margin-bottom: 4px; }
+    .ville-rev { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--sand); }
+
+    #process { padding: 112px 24px; background: var(--sand-pale); }
+    .process-header { text-align: center; margin-bottom: 64px; }
+    .process-header h2 { font-size: clamp(36px, 5vw, 56px); color: var(--night); }
+    .process-header h2 em { color: var(--sand); font-style: italic; }
+    .process-header p { font-size: 17px; color: var(--slate); line-height: 1.8; max-width: 480px; margin: 16px auto 0; }
+    .process-divider { display: flex; justify-content: center; margin-bottom: 20px; }
+    .grid-3-process { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 768px) { .grid-3-process { grid-template-columns: 1fr; } }
+    .process-card { background: #fff; border: 1px solid rgba(201,169,110,.15); border-radius: 20px; padding: 36px; }
+    .process-num { font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 300; color: var(--sand-light); margin-bottom: 20px; line-height: 1; }
+    .process-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; margin-bottom: 14px; }
+    .process-card p { font-size: 14px; color: var(--slate); line-height: 1.85; }
+
+    #voyageurs { padding: 112px 24px; background: var(--night); }
+    .voyageurs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    @media (max-width: 900px) { .voyageurs-grid { grid-template-columns: 1fr; gap: 48px; } }
+    .voy-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .voy-card { background: rgba(255,255,255,.04); border: 1px solid rgba(201,169,110,.1); border-radius: 16px; padding: 24px; min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; }
+    .voy-card-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--sand); }
+    .voy-card-val { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #fff; line-height: 1.3; }
+    .voy-right h2 { font-size: clamp(36px, 5vw, 56px); color: #fff; margin-bottom: 20px; }
+    .voy-right h2 em { color: var(--sand); font-style: italic; }
+    .voy-right p { font-size: 17px; color: rgba(255,255,255,.5); line-height: 1.8; margin-bottom: 28px; }
+    .voy-rating { display: flex; align-items: center; gap: 16px; background: rgba(201,169,110,.08); border: 1px solid rgba(201,169,110,.2); border-radius: 14px; padding: 20px 24px; }
+    .voy-rating svg { color: var(--sand); }
+    .voy-rating-val { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #fff; }
+    .voy-rating-label { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 2px; }
+
+    #temoignages { padding: 112px 24px; background: var(--ivory); }
+    .temoignages-header h2 { font-size: clamp(36px, 5vw, 56px); color: var(--night); margin-bottom: 56px; }
+    .temoignages-header h2 em { color: var(--sand); font-style: italic; }
+    .temo-card { background: #fff; border: 1px solid rgba(201,169,110,.12); border-radius: 20px; padding: 36px; transition: transform .3s, box-shadow .3s; }
+    .temo-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(13,17,23,.08); }
+    .stars { display: flex; gap: 4px; margin-bottom: 24px; }
+    .stars svg { color: var(--sand); }
+    .temo-quote { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; font-weight: 300; color: var(--night); line-height: 1.75; margin-bottom: 28px; }
+    .temo-sep { border: none; border-top: 1px solid rgba(201,169,110,.15); margin-bottom: 20px; }
+    .temo-name { font-size: 14px; font-weight: 500; color: var(--night); }
+    .temo-role { font-size: 12px; color: var(--slate); margin-top: 4px; }
+
+    #faq { padding: 112px 24px; background: var(--sand-pale); }
+    .faq-inner { max-width: 740px; margin: 0 auto; }
+    .faq-header h2 { font-size: clamp(36px, 5vw, 52px); color: var(--night); margin-bottom: 48px; }
+    .faq-header h2 em { color: var(--sand); font-style: italic; }
+    .faq-item { background: #fff; border: 1px solid rgba(201,169,110,.12); border-radius: 16px; overflow: hidden; margin-bottom: 12px; }
+    .faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 24px 28px; background: none; border: none; cursor: pointer; text-align: left; gap: 16px; }
+    .faq-question-text { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--night); font-weight: 500; }
+    .faq-icon { color: var(--slate); flex-shrink: 0; transition: transform .3s; }
+    .faq-item.open .faq-icon { transform: rotate(180deg); color: var(--sand); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+    .faq-answer-inner { padding: 0 28px 24px; font-size: 14px; color: var(--slate); line-height: 1.85; }
+
+    #cta-final { padding: 96px 24px; background: var(--ivory); border-top: 1px solid rgba(201,169,110,.2); text-align: center; }
+    #cta-final h2 { font-size: clamp(36px, 5vw, 56px); color: var(--night); margin-bottom: 16px; }
+    #cta-final h2 em { color: var(--sand); font-style: italic; }
+    #cta-final p { font-size: 17px; color: var(--slate); line-height: 1.8; max-width: 500px; margin: 0 auto 40px; }
+    .cta-btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+    #contact { padding: 112px 24px; background: var(--night); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; gap: 48px; } }
+    .contact-left h2 { font-size: clamp(36px, 5vw, 56px); color: #fff; margin-bottom: 20px; }
+    .contact-left h2 em { color: var(--sand); font-style: italic; }
+    .contact-left p { font-size: 17px; color: rgba(255,255,255,.45); line-height: 1.8; margin-bottom: 36px; }
+    .contact-info { display: flex; flex-direction: column; gap: 18px; }
+    .contact-info-item { display: flex; align-items: center; gap: 14px; }
+    .contact-info-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(201,169,110,.1); display: flex; align-items: center; justify-content: center; color: var(--sand); flex-shrink: 0; }
+    .contact-info-text { font-size: 14px; color: rgba(255,255,255,.5); }
+
+    .form-box { background: rgba(255,255,255,.04); border: 1px solid rgba(201,169,110,.12); border-radius: 20px; padding: 36px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+    .form-field { width: 100%; padding: 14px 16px; background: rgba(255,255,255,.06); border: 1px solid rgba(201,169,110,.15); border-radius: 12px; color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .2s; margin-bottom: 0; }
+    .form-field:focus { border-color: var(--sand); }
+    .form-field::placeholder { color: rgba(255,255,255,.3); }
+    select.form-field option { background: var(--night); }
+    .form-full { width: 100%; margin-bottom: 14px; }
+    .form-submit { width: 100%; margin-top: 8px; justify-content: center; }
+    .form-note { text-align: center; font-size: 12px; color: rgba(255,255,255,.2); margin-top: 12px; }
+    .form-success { text-align: center; padding: 56px 32px; }
+    .form-success svg { color: var(--sand); margin-bottom: 20px; }
+    .form-success h3 { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: #fff; margin-bottom: 8px; }
+    .form-success p { font-size: 14px; color: rgba(255,255,255,.4); }
+
+    footer { background: var(--night); border-top: 1px solid rgba(201,169,110,.1); padding: 64px 24px 32px; }
+    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 56px; }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-brand-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #fff; margin-bottom: 6px; }
+    .footer-brand-sub { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--sand); margin-bottom: 14px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(255,255,255,.3); line-height: 1.7; }
+    .footer-socials { display: flex; gap: 10px; margin-top: 20px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.05); border: 1px solid rgba(201,169,110,.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.45); text-decoration: none; transition: .2s; }
+    .social-btn:hover { background: rgba(201,169,110,.15); color: var(--sand); }
+    .footer-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--sand); margin-bottom: 18px; }
+    .footer-link { display: block; font-size: 14px; color: rgba(255,255,255,.3); text-decoration: none; margin-bottom: 12px; transition: color .2s; }
+    .footer-link:hover { color: var(--sand); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-top: 24px; border-top: 1px solid rgba(201,169,110,.08); }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,.2); }
+    .footer-legal { display: flex; gap: 20px; }
+    .footer-legal a { font-size: 12px; color: rgba(255,255,255,.2); text-decoration: none; }
+
+    .whatsapp-btn {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #25D366; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(37,211,102,.4);
+      text-decoration: none; transition: transform .2s, box-shadow .2s;
+    }
+    .whatsapp-btn:hover { transform: scale(1.1); box-shadow: 0 12px 32px rgba(37,211,102,.5); }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-name">Nidami</span>
+      <span class="nav-logo-sub">Conciergerie</span>
+    </a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#avantages">Propriétaires</a>
+      <a href="#villes">Villes</a>
+      <a href="#voyageurs">Voyageurs</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-primary btn-sm">Confier mon bien</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#avantages" onclick="closeMobile()">Propriétaires</a>
+    <a href="#villes" onclick="closeMobile()">Villes</a>
+    <a href="#voyageurs" onclick="closeMobile()">Voyageurs</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+    <a href="#contact" class="btn btn-primary btn-sm" style="text-align:center" onclick="closeMobile()">Confier mon bien</a>
+  </div>
+</nav>
+<section id="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="tag anim" style="margin-bottom:28px">
+        <span class="tag-dot"></span> Conciergerie Premium au Maroc
+      </div>
+      <h1 class="anim anim-d1">Votre bien mérite<br><em>mieux qu'un gestionnaire</em></h1>
+      <p class="anim anim-d2">Nidami transforme vos biens immobiliers en actifs performants grâce à une gestion locative courte durée d'exception — de Casablanca à Marrakech, de Rabat à Tanger.</p>
+      <div class="hero-btns anim anim-d3">
+        <a href="#contact" class="btn btn-primary">Confier mon bien →</a>
+        <a href="#services" class="btn btn-outline">Découvrir nos services</a>
+      </div>
+      <div class="hero-stats anim anim-d4">
+        <div>
+          <div class="hero-stat-val">250+</div>
+          <div class="hero-stat-label">Biens gérés</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">94%</div>
+          <div class="hero-stat-label">Taux d'occupation moy.</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">4.9 ★</div>
+          <div class="hero-stat-label">Note voyageurs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-card anim anim-d2">
+      <div class="hero-card-loc">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        Marrakech Médina
+      </div>
+      <h3>Riad Dar Nour</h3>
+      <div class="hero-card-lines"><div class="hero-card-line"></div><div class="hero-card-line"></div><div class="hero-card-line"></div></div>
+      <hr class="hero-card-sep">
+      <div class="hero-card-stats">
+        <div class="hero-card-stat">
+          <div class="hero-card-stat-label">Taux occupation</div>
+          <div class="hero-card-stat-val">94%</div>
+        </div>
+        <div style="width:1px;background:rgba(201,169,110,.2)"></div>
+        <div class="hero-card-stat">
+          <div class="hero-card-stat-label">Rev. mensuel</div>
+          <div class="hero-card-stat-val">18 400 MAD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="trust">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <svg class="trust-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Partenaire Airbnb certifié
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Assurance multi-risques incluse
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Mise en ligne en 72h
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Support 7j/7, 24h/24
+    </div>
+  </div>
+</section>
+<section id="services" style="padding:112px 24px;background:var(--ivory)">
+  <div class="container">
+    <div class="section-header anim">
+      <div class="divider"></div>
+      <h2>Une gestion complète,<br><em>du début à la fin</em></h2>
+      <p>Nous prenons en charge l'intégralité du cycle locatif pour que vous puissiez percevoir des revenus sans vous occuper d'autre chose.</p>
+    </div>
+    <div class="grid-3">
+      <div class="service-card anim anim-d1"><div class="service-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><h3>Gestion des annonces</h3><p>Photos professionnelles, rédaction optimisée, référencement premium sur Airbnb, Booking et Expedia pour maximiser votre visibilité.</p></div>
+      <div class="service-card anim anim-d2"><div class="service-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><h3>Optimisation des revenus</h3><p>Algorithme de tarification dynamique basé sur la saisonnalité, les événements locaux et la demande réelle pour maximiser chaque nuit.</p></div>
+      <div class="service-card anim anim-d3"><div class="service-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><h3>Check-in & Check-out</h3><p>Accueil personnalisé de vos voyageurs, remise des clés sécurisée, état des lieux rigoureux à chaque rotation.</p></div>
+      <div class="service-card anim anim-d1"><div class="service-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"/><path d="M12 8v4l3 3"/></svg></div><h3>Ménage & Linge hôtelier</h3><p>Équipes de ménage professionnelles, linge de qualité hôtelière renouvelé à chaque séjour, standards impeccables.</p></div>
+      <div class="service-card anim anim-d2"><div class="service-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42C1.61 2.55 2.26 2 3.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.07 6.07l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><h3>Assistance voyageurs</h3><p>Conciergerie active 7j/7 pour vos voyageurs : recommandations locales, gestion des urgences, expérience mémorable garantie.</p></div>
+      <div class="service-card anim anim-d3"><div class="service-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h3>Suivi propriétaire</h3><p>Dashboard temps réel, rapports mensuels détaillés, virements automatiques — vous gardez le contrôle sans le stress.</p></div>
+    </div>
+  </div>
+</section>
+<section id="avantages" style="padding:112px 24px;background:var(--night)">
+  <div class="container">
+    <div class="avantages-grid">
+      <div class="avantages-left anim">
+        <div class="divider"></div>
+        <h2>Propriétaire sans<br><em>contraintes</em></h2>
+        <p>Vous avez investi dans un bien immobilier. Vous méritez d'en tirer le meilleur rendement sans sacrifier votre temps ou votre sérénité.</p>
+        <a href="#contact" class="btn btn-primary">Estimer mon potentiel →</a>
+      </div>
+      <div class="avantages-cards anim anim-d2">
+        <div class="av-card"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><h4>Zéro gestion</h4><p>Libérez-vous totalement : nous gérons chaque aspect opérationnel à votre place.</p></div>
+        <div class="av-card"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><h4>Revenus optimisés</h4><p>Nos propriétaires gagnent en moyenne 35% de plus qu'en gestion classique.</p></div>
+        <div class="av-card"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><h4>Zéro stress</h4><p>Nos process rigoureux et notre assurance vous protègent à chaque instant.</p></div>
+        <div class="av-card"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><h4>Transparence totale</h4><p>Dashboard en temps réel, rapports clairs, revenus versés chaque mois sans délai.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="villes" style="padding:112px 24px;background:var(--ivory)">
+  <div class="container">
+    <div class="villes-header anim">
+      <div>
+        <div class="divider"></div>
+        <h2>Nos villes,<br><em>nos performances</em></h2>
+      </div>
+      <p>Présents dans les 4 grandes destinations touristiques du Maroc avec des équipes locales dédiées.</p>
+    </div>
+    <div class="grid-4">
+      <div class="ville-card anim anim-d1" style="background:#1A2332"><div><div class="ville-loc"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Casablanca</div><h3>Appartement Vue Mer</h3><p class="ville-rooms">3 ch · Taux 91%</p></div><div><hr class="ville-sep"><p class="ville-rev-label">Revenu estimé</p><p class="ville-rev">22 800 MAD / mois</p></div></div>
+      <div class="ville-card anim anim-d2" style="background:#2A1A0E"><div><div class="ville-loc"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Marrakech</div><h3>Riad Médina</h3><p class="ville-rooms">5 ch · Taux 96%</p></div><div><hr class="ville-sep"><p class="ville-rev-label">Revenu estimé</p><p class="ville-rev">34 500 MAD / mois</p></div></div>
+      <div class="ville-card anim anim-d3" style="background:#0E1A1A"><div><div class="ville-loc"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Rabat</div><h3>Penthouse Agdal</h3><p class="ville-rooms">2 ch · Taux 88%</p></div><div><hr class="ville-sep"><p class="ville-rev-label">Revenu estimé</p><p class="ville-rev">16 200 MAD / mois</p></div></div>
+      <div class="ville-card anim anim-d4" style="background:#1A0E2A"><div><div class="ville-loc"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Tanger</div><h3>Villa Côtière</h3><p class="ville-rooms">4 ch · Taux 93%</p></div><div><hr class="ville-sep"><p class="ville-rev-label">Revenu estimé</p><p class="ville-rev">28 100 MAD / mois</p></div></div>
+    </div>
+  </div>
+</section>
+<section id="process" style="padding:112px 24px;background:var(--sand-pale)">
+  <div class="container">
+    <div class="process-header anim">
+      <div class="process-divider"><div class="divider"></div></div>
+      <h2>Simple comme<br><em>bonjour</em></h2>
+      <p>Trois étapes pour transformer votre bien en source de revenus optimisée.</p>
+    </div>
+    <div class="grid-3-process">
+      <div class="process-card anim anim-d1"><div class="process-num">01</div><h3>Vous nous confiez votre bien</h3><p>Nous effectuons une visite de votre propriété, évaluons son potentiel locatif et vous proposons une stratégie tarifaire personnalisée. Zéro engagement immédiat.</p></div>
+      <div class="process-card anim anim-d2"><div class="process-num">02</div><h3>Nous optimisons & gérons</h3><p>Shooting photo professionnel, création de l'annonce, gestion des réservations, accueil des voyageurs, entretien et maintenance — nous prenons tout en charge.</p></div>
+      <div class="process-card anim anim-d3"><div class="process-num">03</div><h3>Vous suivez vos revenus</h3><p>Chaque mois, vous recevez vos revenus avec un rapport détaillé. Notre dashboard vous permet de tout suivre en temps réel, depuis n'importe où.</p></div>
+    </div>
+  </div>
+</section>
+<section id="voyageurs" style="padding:112px 24px;background:var(--night)">
+  <div class="container">
+    <div class="voyageurs-grid">
+      <div class="voy-cards anim">
+        <div class="voy-card"><p class="voy-card-label">Confort premium</p><p class="voy-card-val">Équipements<br>hôteliers</p></div>
+        <div class="voy-card"><p class="voy-card-label">Design soigné</p><p class="voy-card-val">Interiors<br>curés</p></div>
+        <div class="voy-card"><p class="voy-card-label">Check-in digital</p><p class="voy-card-val">Arrivée<br>autonome 24h</p></div>
+        <div class="voy-card"><p class="voy-card-label">Concierge dédié</p><p class="voy-card-val">Conseils<br>locaux</p></div>
+      </div>
+      <div class="voy-right anim anim-d2">
+        <div class="divider"></div>
+        <h2>Un séjour au Maroc<br><em>inoubliable</em></h2>
+        <p>Chaque bien Nidami est sélectionné, équipé et préparé pour offrir une expérience de qualité hôtelière. Vous logez dans un espace authentique, vous êtes accompagné comme un invité de marque.</p>
+        <div class="voy-rating">
+          <svg width="22" height="22" fill="var(--sand)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <div>
+            <div class="voy-rating-val">4.92 / 5</div>
+            <div class="voy-rating-label">Note moyenne · +1 200 avis vérifiés</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="temoignages" style="padding:112px 24px;background:var(--ivory)">
+  <div class="container">
+    <div class="temoignages-header anim">
+      <div class="divider"></div>
+      <h2>Ce que disent<br><em>nos propriétaires</em></h2>
+    </div>
+    <div class="grid-3">
+      <div class="temo-card anim anim-d1"><div class="stars"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="temo-quote">« En 6 mois avec Nidami, mes revenus ont augmenté de 42% par rapport à ma gestion personnelle. Et surtout, je ne reçois plus aucun appel de voyageur à minuit. »</p><hr class="temo-sep"><div class="temo-name">Samir K.</div><div class="temo-role">Propriétaire · Casablanca</div></div>
+      <div class="temo-card anim anim-d2"><div class="stars"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="temo-quote">« J'ai confié deux riads à Nidami. Le suivi est impeccable, les rapports sont clairs, et l'équipe est d'un professionnalisme rare. C'est exactement ce que je cherchais. »</p><hr class="temo-sep"><div class="temo-name">Leïla M.</div><div class="temo-role">Investisseuse · Marrakech</div></div>
+      <div class="temo-card anim anim-d3"><div class="stars"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="temo-quote">« Le processus de démarrage était simple et rapide. En moins de deux semaines, mon appartement était en ligne et les premières réservations tombaient. Très sérieux. »</p><hr class="temo-sep"><div class="temo-name">Youssef A.</div><div class="temo-role">Propriétaire · Tanger</div></div>
+    </div>
+  </div>
+</section>
+<section id="faq" style="padding:112px 24px;background:var(--sand-pale)">
+  <div class="faq-inner">
+    <div class="faq-header anim"><div class="divider"></div><h2>Questions <em>fréquentes</em></h2></div>
+    <div id="faq-list">
+      <div class="faq-item anim anim-d1"><button class="faq-question" onclick="toggleFaq(this)"><span class="faq-question-text">Comment fonctionne concrètement la gestion ?</span><svg class="faq-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer"><div class="faq-answer-inner">Nous prenons en charge l'intégralité du processus : création et optimisation de l'annonce, communication avec les voyageurs, check-in/check-out, ménage et maintenance. Vous n'avez rien à faire, si ce n'est consulter votre dashboard et recevoir vos revenus.</div></div></div>
+      <div class="faq-item anim anim-d2"><button class="faq-question" onclick="toggleFaq(this)"><span class="faq-question-text">Combien puis-je espérer gagner avec Nidami ?</span><svg class="faq-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer"><div class="faq-answer-inner">Cela dépend de la superficie, de l'emplacement et de la période. En moyenne, nos propriétaires perçoivent 35 à 65% de revenus supplémentaires par rapport à une location longue durée classique. Nous vous proposons une estimation gratuite avant tout engagement.</div></div></div>
+      <div class="faq-item anim anim-d3"><button class="faq-question" onclick="toggleFaq(this)"><span class="faq-question-text">Dans quelles villes êtes-vous présents ?</span><svg class="faq-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer"><div class="faq-answer-inner">Nous opérons actuellement à Casablanca, Marrakech, Rabat et Tanger. Nous développons notre présence dans d'autres destinations touristiques marocaines. Contactez-nous pour votre ville.</div></div></div>
+      <div class="faq-item anim anim-d4"><button class="faq-question" onclick="toggleFaq(this)"><span class="faq-question-text">Comment démarre la collaboration ?</span><svg class="faq-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer"><div class="faq-answer-inner">Très simplement : un échange téléphonique, une visite du bien, une proposition personnalisée. Si vous êtes satisfait, nous lançons la mise en place en 72h chrono : photo, annonce, et premières réservations.</div></div></div>
+      <div class="faq-item anim anim-d5"><button class="faq-question" onclick="toggleFaq(this)"><span class="faq-question-text">Qui s'occupe des voyageurs en cas de problème ?</span><svg class="faq-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer"><div class="faq-answer-inner">Notre équipe de conciergerie est disponible 7j/7 et 24h/24 pour vos voyageurs. Chaque bien dispose d'un référent dédié qui gère les demandes, urgences et recommandations. Vous n'êtes jamais sollicité directement.</div></div></div>
+    </div>
+  </div>
+</section>
+<section id="cta-final">
+  <div class="anim"><div class="divider" style="margin:0 auto 20px"></div><h2>Votre bien mérite<br><em>de performer</em></h2><p>Rejoignez les propriétaires qui ont choisi Nidami pour transformer leur immobilier en revenu optimisé, sans effort.</p><div class="cta-btns"><a href="#contact" class="btn btn-primary">Obtenir mon estimation gratuite →</a><a href="tel:+33758108928" class="btn btn-outline"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42C1.61 2.55 2.26 2 3.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.07 6.07l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Appeler maintenant</a></div></div>
+</section>
+<section id="contact" style="padding:112px 24px;background:var(--night)">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-left anim">
+        <div class="divider"></div>
+        <h2>Parlons de<br><em>votre bien</em></h2>
+        <p>Vous avez un bien à louer ou un projet en cours ? Notre équipe vous répond sous 24h et vous propose une estimation gratuite de vos revenus potentiels.</p>
+        <div class="contact-info">
+          <div class="contact-info-item"><div class="contact-info-icon"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42C1.61 2.55 2.26 2 3.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.07 6.07l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><span class="contact-info-text">+33758108928</span></div>
+          <div class="contact-info-item"><div class="contact-info-icon"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><span class="contact-info-text">mehdiarsalane2@gmail.com</span></div>
+          <div class="contact-info-item"><div class="contact-info-icon"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div><span class="contact-info-text">Casablanca · Marrakech · Rabat · Tanger</span></div>
+        </div>
+      </div>
+      <div class="anim anim-d2">
+        <div class="form-box" id="form-box">
+          <div class="form-row"><input class="form-field" type="text" id="f-nom" placeholder="Votre nom" /><input class="form-field" type="email" id="f-email" placeholder="Adresse email" /></div>
+          <input class="form-field form-full" type="tel" id="f-tel" placeholder="Téléphone" />
+          <select class="form-field form-full" id="f-type"><option value="" disabled selected>Type de demande</option><option value="owner">Je suis propriétaire</option><option value="investor">Je suis investisseur</option><option value="traveler">Je suis voyageur</option><option value="other">Autre demande</option></select>
+          <textarea class="form-field form-full" id="f-message" rows="4" placeholder="Votre message..."></textarea>
+          <button class="btn btn-primary form-submit" onclick="submitForm()">Envoyer ma demande →</button>
+          <p class="form-note">Réponse garantie sous 24h · Estimation gratuite incluse</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-brand-name">Nidami</div><div class="footer-brand-sub">Conciergerie Premium</div><div class="footer-brand-tagline">Votre bien. Notre expertise.<br>Vos revenus.</div><div class="footer-socials"><a href="#" class="social-btn" aria-label="Instagram"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a><a href="#" class="social-btn" aria-label="Facebook"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a><a href="#" class="social-btn" aria-label="LinkedIn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a></div></div>
+    <div><div class="footer-col-title">Services</div><a href="#services" class="footer-link">Gestion locative</a><a href="#services" class="footer-link">Optimisation revenus</a><a href="#services" class="footer-link">Check-in / Check-out</a><a href="#services" class="footer-link">Ménage hôtelier</a><a href="#services" class="footer-link">Assistance voyageurs</a></div>
+    <div><div class="footer-col-title">Villes</div><a href="#villes" class="footer-link">Casablanca</a><a href="#villes" class="footer-link">Marrakech</a><a href="#villes" class="footer-link">Rabat</a><a href="#villes" class="footer-link">Tanger</a></div>
+    <div><div class="footer-col-title">Contact</div><p class="footer-link" style="cursor:default">+33758108928</p><p class="footer-link" style="cursor:default">mehdiarsalane2@gmail.com</p><a href="#contact" class="btn btn-primary btn-sm" style="margin-top:12px">Nous contacter</a></div>
+  </div>
+  <div class="footer-bottom"><span class="footer-copy">© 2025 Nidami Conciergerie. Tous droits réservés.</span><div class="footer-legal"><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">CGU</a></div></div>
+</footer>
+<a href="https://wa.me/33758108928" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" aria-label="WhatsApp"><svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a>
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  function closeMobile() { mobileMenu.classList.remove('open'); }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.anim').forEach(el => observer.observe(el));
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-answer').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
+
+  function submitForm() {
+    const nom = document.getElementById('f-nom').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    if (!nom || !email) { alert('Veuillez remplir au moins votre nom et votre email.'); return; }
+    document.getElementById('form-box').innerHTML = `
+      <div class="form-success">
+        <svg width="52" height="52" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h3>Message envoyé !</h3>
+        <p>Notre équipe vous contactera sous 24h pour discuter de votre projet.</p>
+      </div>`;
+  }
+
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.boxShadow = window.scrollY > 40 ? '0 4px 24px rgba(13,17,23,0.08)' : 'none';
+  });
+</script>
+</body>
+</html>
