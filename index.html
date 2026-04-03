@@ -892,19 +892,6 @@
     }
   }
 
-  /* ── FORM ── */
-  function submitForm() {
-    const nom = document.getElementById('f-nom').value.trim();
-    const email = document.getElementById('f-email').value.trim();
-    if (!nom || !email) { alert('Veuillez remplir au moins votre nom et votre email.'); return; }
-    document.getElementById('form-box').innerHTML = `
-      <div class="form-success">
-        <svg width="52" height="52" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <h3>Message envoyé !</h3>
-        <p>Notre équipe vous contactera sous 24h pour discuter de votre projet.</p>
-      </div>`;
-  }
-
   /* ── NAV SCROLL ── */
   window.addEventListener('scroll', () => {
     const nav = document.querySelector('nav');
