@@ -740,30 +740,9 @@
 <section id="contact" style="padding:112px 24px;background:var(--night)">
   <div class="container">
     <div class="contact-grid">
+
       <div class="contact-left anim">
         <div class="divider"></div>
-
-    <form action="https://formspree.io/f/mbdpzlgp" method="POST" class="form-box">
-  <div class="form-row">
-    <input type="text" name="nom" class="form-field" placeholder="Votre nom" required>
-    <input type="email" name="email" class="form-field" placeholder="Adresse email" required>
-  </div>
-
-  <input type="text" name="telephone" class="form-field" placeholder="Téléphone">
-
-  <select name="type_demande" class="form-field" required>
-    <option value="">Type de demande</option>
-    <option value="Estimation gratuite">Estimation gratuite</option>
-    <option value="Mise en gestion">Mise en gestion</option>
-    <option value="Demande d'information">Demande d'information</option>
-  </select>
-
-  <textarea name="message" class="form-field" placeholder="Votre message..." required></textarea>
-
-  <button type="submit" class="btn btn-primary">Envoyer ma demande →</button>
-</form>
-
-</div>
         <h2>Parlons de<br><em>votre bien</em></h2>
         <p>Vous avez un bien à louer ou un projet en cours à Casablanca ? Notre équipe vous répond sous 24h et vous propose une estimation gratuite de vos revenus potentiels.</p>
         <div class="contact-info">
@@ -783,24 +762,24 @@
       </div>
 
       <div class="anim anim-d2">
-        <div class="form-box" id="form-box">
+        <form action="https://formspree.io/f/mbdpzlgp" method="POST" class="form-box">
           <div class="form-row">
-            <input class="form-field" type="text" id="f-nom" placeholder="Votre nom" />
-            <input class="form-field" type="email" id="f-email" placeholder="Adresse email" />
+            <input type="text" name="nom" class="form-field" placeholder="Votre nom" required />
+            <input type="email" name="email" class="form-field" placeholder="Adresse email" required />
           </div>
-          <input class="form-field form-full" type="tel" id="f-tel" placeholder="Téléphone" />
-          <select class="form-field form-full" id="f-type">
+          <input type="text" name="telephone" class="form-field form-full" placeholder="Téléphone" />
+          <select name="type_demande" class="form-field form-full" required>
             <option value="" disabled selected>Type de demande</option>
-            <option value="owner">Je suis propriétaire</option>
-            <option value="investor">Je suis investisseur</option>
-            <option value="traveler">Je suis voyageur</option>
-            <option value="other">Autre demande</option>
+            <option value="Estimation gratuite">Estimation gratuite</option>
+            <option value="Mise en gestion">Mise en gestion</option>
+            <option value="Demande d'information">Demande d'information</option>
           </select>
-          <textarea class="form-field form-full" id="f-message" rows="4" placeholder="Votre message..."></textarea>
-          <button class="btn btn-primary form-submit" onclick="submitForm()">Envoyer ma demande →</button>
+          <textarea name="message" class="form-field form-full" rows="4" placeholder="Votre message..." required></textarea>
+          <button type="submit" class="btn btn-primary form-submit">Envoyer ma demande →</button>
           <p class="form-note">Réponse garantie sous 24h · Estimation gratuite incluse</p>
-        </div>
+        </form>
       </div>
+
     </div>
   </div>
 </section>
