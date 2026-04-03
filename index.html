@@ -744,19 +744,25 @@
         <div class="divider"></div>
         <div class="contact-right anim">
 
-  <form action="https://formspree.io/f/mbdpzlgp" method="POST">
+    <form action="https://formspree.io/f/mbdpzlgp" method="POST" class="form-box">
+  <div class="form-row">
+    <input type="text" name="nom" class="form-field" placeholder="Votre nom" required>
+    <input type="email" name="email" class="form-field" placeholder="Adresse email" required>
+  </div>
 
-    <input type="text" name="nom" placeholder="Votre nom" required>
+  <input type="text" name="telephone" class="form-field" placeholder="Téléphone">
 
-    <input type="email" name="email" placeholder="Votre email" required>
+  <select name="type_demande" class="form-field" required>
+    <option value="">Type de demande</option>
+    <option value="Estimation gratuite">Estimation gratuite</option>
+    <option value="Mise en gestion">Mise en gestion</option>
+    <option value="Demande d'information">Demande d'information</option>
+  </select>
 
-    <input type="text" name="telephone" placeholder="Votre téléphone">
+  <textarea name="message" class="form-field" placeholder="Votre message..." required></textarea>
 
-    <textarea name="message" placeholder="Votre demande" required></textarea>
-
-    <button type="submit">Envoyer</button>
-
-  </form>
+  <button type="submit" class="btn btn-primary">Envoyer ma demande →</button>
+</form>
 
 </div>
         <h2>Parlons de<br><em>votre bien</em></h2>
